@@ -4,6 +4,10 @@
 
 This repository contains a notebook-based credit underwriting workflow with an added decisioning layer. It reuses existing model outputs to demonstrate **approval thresholds**, **risk tiers**, **decision mapping** (approve / review / decline), a **threshold tradeoff simulation** (approval rate vs default rate among approved), **SHAP explainability**, and a **simple directional loss framing** (avg loan size + LGD assumptions).
 
+**Observed model efficacy (from the notebook analysis):** A simple logistic baseline shows **moderate rank ordering** on the test split (ROC-AUC around **0.66**—better than random, not near-perfect). **Tree-based models** (Random Forest and XGBoost) reach on the order of **~92% accuracy** with **stable cross-validation**, i.e., strong and consistent separation on this workflow’s train/test design. The parallel **interest-rate** regression achieves a **high R² (~0.92)**, consistent with pricing being highly predictable from the available credit-structure features.
+
+**FICO and credit structure:** In exploratory analysis, **Lending Club `sub_grade` is treated as FICO-like (binned credit quality)**; **interest rate and `sub_grade` are ~96% correlated**, which supports the view that **Lending Club’s posted pricing is heavily anchored in FICO-like credit tiers** (the remaining spread still matters competitively). The notebook also notes that **credit rating dominates the interest-rate model** in line with long industry use of FICO-style scores, while **feature-importance rankings can differ by target** (e.g., **inquiries** can rank highly for `loan_status` even when **`sub_grade` is central to rate prediction**). Exact metrics vary slightly with data slice and seed; re-run cells for your copy of the data.
+
 ## Business Context
 
 Lenders need more than model scores: they need explicit decision rules that balance approval volume and risk outcomes. This project focuses on translating model output into policy-style decisions and directional business interpretation.
