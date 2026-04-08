@@ -4,3 +4,6 @@ __pycache__/
 .venv/
 venv/
 .env
+
+# nbconvert execution artifacts (regenerate locally)
+*.executed.ipynb
