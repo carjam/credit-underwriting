@@ -42,14 +42,15 @@ Lenders need more than model scores: they need explicit decision rules that bala
 | `src/decisioning.py` | Decision tiers, actions, threshold sweep, simple capital helpers |
 | `docs/PORTFOLIO_DECISIONING.md` | Stakeholder-oriented description of the decisioning add-on |
 | `docs/TESTING.md` | Testing and regression workflow documentation |
-| `requirements.txt` | Dependencies including `shap` |
+| `requirements.txt` | Dependencies including `shap`, `pytest`, `nbconvert` / `nbformat` for tests |
 
 **Environment:** Python 3.9.x recommended (per notebook metadata). Configure dataset path via `DATA_PATH` in the notebook.
 
 ## Testing and Regression Framework
 
-- `pytest`-based test suite with strict markers (`unit`, `smoke`, `regression`)
+- `pytest`-based test suite with strict markers (`unit`, `smoke`, `regression`, `notebook_e2e`)
 - Unit coverage for decision-layer logic in `src/decisioning.py`
+- Notebook **schema** checks plus bundled `data/loans.csv` presence; optional **full execution** via `nbconvert` (see `docs/TESTING.md`)
 - Deterministic model smoke test to ensure ML pipeline health in local environment
 - Baseline-driven regression test using `tests/baselines/model_quality_baseline.json`
 - See `docs/TESTING.md` for run commands and baseline update workflow

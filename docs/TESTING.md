@@ -1,6 +1,6 @@
 # Testing and Regression Framework
 
-This repository now includes a lightweight test framework to support ongoing regression checks.
+This repository includes a lightweight test framework for regression checks plus **notebook integrity** and optional **full notebook execution**.
 
 ## Test Layers
 
@@ -10,6 +10,12 @@ This repository now includes a lightweight test framework to support ongoing reg
     - approve/review/decline mapping
     - threshold sweep math
     - simple capital helper functions
+
+- **Notebook checks** (`tests/test_notebook.py`)
+  - **Always run (fast):**
+    - `nbformat` schema validation on `Credit_Underwriting_Decisioning-Lending_Club.ipynb`
+    - presence of bundled `data/loans.csv` expected by the notebook
+  - **End-to-end (slow):** runs `jupyter nbconvert --execute` from the repo root so paths like `data/loans.csv` resolve. Marked `notebook_e2e`.
 
 - **Smoke test** (`tests/test_model_smoke.py`)
   - Verifies the local ML toolchain behaves correctly with a deterministic reference model run.
@@ -22,8 +28,29 @@ This repository now includes a lightweight test framework to support ongoing reg
 
 ## Run Tests
 
+Default (local): fast suite; **notebook E2E is skipped** so `pytest` stays quick.
+
 ```bash
 pytest
+```
+
+Run the **full notebook** execution test (several minutes):
+
+```bash
+pytest --run-notebook
+```
+
+Or:
+
+```bash
+set RUN_NOTEBOOK_E2E=1
+pytest
+```
+
+On **CI** (`CI=true`, e.g. GitHub Actions), the notebook E2E test runs automatically. To disable it in CI only:
+
+```bash
+set SKIP_NOTEBOOK_E2E=1
 ```
 
 Run only smoke tests:
@@ -38,6 +65,12 @@ Run only regression checks:
 pytest -m regression
 ```
 
+Fast checks only (exclude slow E2E by marker):
+
+```bash
+pytest -m "not notebook_e2e"
+```
+
 ## Updating Baselines Intentionally
 
 If you intentionally change baseline expectations:
@@ -48,6 +81,5 @@ If you intentionally change baseline expectations:
 
 ## Notes
 
-- These tests validate **decisioning code correctness** and **environment/model health**.
-- They do **not** execute the full notebook end-to-end.
-- For notebook-level validation, run the notebook portfolio decisioning section after model cells have executed.
+- Unit/smoke/regression tests validate **decisioning code correctness** and **environment/model health**.
+- **Notebook E2E** validates that the main analysis notebook still executes with the bundled dataset and current dependencies (see `requirements.txt` for `nbconvert` / `nbformat`).
