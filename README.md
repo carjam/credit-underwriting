@@ -11,12 +11,12 @@ This repository contains a notebook-based credit underwriting workflow with an a
 ## System Flow
 
 ```mermaid
-flowchart LR
-    A[Bundled dataset / configured CSV] --> B[Notebook feature pipeline]
-    B --> C[Existing trained classifier outputs p_good]
-    C --> D[Decision policy thresholds]
-    D --> E[Approve / Review / Decline + Risk tiers]
-    E --> F[Portfolio metrics: approval rate, default rate, EL lens]
+flowchart TB
+    A["Bundled dataset /<br/>configured CSV"] --> B["Notebook feature<br/>pipeline"]
+    B --> C["Trained classifier<br/>outputs p_good"]
+    C --> D["Decision policy<br/>thresholds"]
+    D --> E["Approve / Review / Decline<br/>+ risk tiers"]
+    E --> F["Portfolio metrics<br/>approval rate, default rate,<br/>EL lens"]
 ```
 
 ## Evidence, scope, and reproduction
