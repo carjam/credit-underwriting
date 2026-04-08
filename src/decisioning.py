@@ -5,8 +5,22 @@ No model training here — consumes P(good) and labels only.
 """
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 import numpy as np
 import pandas as pd
+
+
+@dataclass(frozen=True)
+class DecisionPolicy:
+    """Configurable decision and tier thresholds."""
+
+    approve_min: float = 0.65
+    review_min: float = 0.50
+    prime_cut: float = 0.70
+    near_cut: float = 0.50
+    avg_loan_amount: float = 10000.0
+    lgd: float = 0.45
 
 
 def risk_tier(p_good: np.ndarray, prime_cut: float = 0.70, near_cut: float = 0.50) -> np.ndarray:
@@ -75,3 +89,14 @@ def simple_expected_loss_per_approved(
 
 def portfolio_notional_exposure(n_approved: int, avg_loan_amount: float) -> float:
     return float(n_approved * avg_loan_amount)
+
+
+def apply_policy(p_good: np.ndarray, policy: DecisionPolicy) -> pd.DataFrame:
+    """
+    Apply a policy to model scores and return per-applicant decision outputs.
+    """
+    p = np.asarray(p_good, dtype=float)
+    out = pd.DataFrame({"p_good": p})
+    out["risk_tier"] = risk_tier(p, prime_cut=policy.prime_cut, near_cut=policy.near_cut)
+    out["decision"] = decisions(p, approve_min=policy.approve_min, review_min=policy.review_min)
+    return out

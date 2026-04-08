@@ -8,6 +8,17 @@ This repository contains a notebook-based credit underwriting workflow with an a
 
 **FICO and credit structure:** In exploratory analysis, **Lending Club `sub_grade` is treated as FICO-like (binned credit quality)**; **interest rate and `sub_grade` are ~96% correlated**, which supports the view that **Lending Club’s posted pricing is heavily anchored in FICO-like credit tiers** (the remaining spread still matters competitively). The notebook also notes that **credit rating dominates the interest-rate model** in line with long industry use of FICO-style scores, while **feature-importance rankings can differ by target** (e.g., **inquiries** can rank highly for `loan_status` even when **`sub_grade` is central to rate prediction**). Exact metrics vary slightly with data slice and seed; re-run cells for your copy of the data.
 
+## System Flow
+
+```mermaid
+flowchart LR
+    A[Bundled dataset / configured CSV] --> B[Notebook feature pipeline]
+    B --> C[Existing trained classifier outputs p_good]
+    C --> D[Decision policy thresholds]
+    D --> E[Approve / Review / Decline + Risk tiers]
+    E --> F[Portfolio metrics: approval rate, default rate, EL lens]
+```
+
 ## Business Context
 
 Lenders need more than model scores: they need explicit decision rules that balance approval volume and risk outcomes. This project focuses on translating model output into policy-style decisions and directional business interpretation.
@@ -44,11 +55,31 @@ Lenders need more than model scores: they need explicit decision rules that bala
 |----------|------|
 | `Credit_Underwriting_Decisioning-Lending_Club.ipynb` | Existing modeling workflow + added decisioning/simulation/SHAP cells |
 | `src/decisioning.py` | Decision tiers, actions, threshold sweep, simple capital helpers |
+| `config/policy.default.yaml` | Configurable decision/risk thresholds and LGD assumptions |
+| `scripts/run_decisioning.py` | CLI path to apply decision policy outside Jupyter |
 | `docs/PORTFOLIO_DECISIONING.md` | Stakeholder-oriented description of the decisioning add-on |
+| `docs/RUNBOOK.md` | Day-2 operations: environment, data snapshot, and execution steps |
 | `docs/TESTING.md` | Testing and regression workflow documentation |
-| `requirements.txt` | Dependencies including `shap`, `pytest`, `nbconvert` / `nbformat` for tests |
+| `requirements.txt` | Pinned dependencies for reproducible local/CI runs |
 
 **Environment:** Python 3.9.x recommended (per notebook metadata). Configure dataset path via `DATA_PATH` in the notebook.
+
+## Run Book
+
+1. Install dependencies:
+   - `pip install -r requirements.txt`
+2. Run tests (fast local path):
+   - `pytest`
+3. Run full notebook execution test:
+   - `pytest --run-notebook`
+4. Run notebook manually:
+   - open `Credit_Underwriting_Decisioning-Lending_Club.ipynb`
+   - ensure data resolves from `data/loans.csv` (or set `LENDING_CLUB_DATA_PATH`)
+5. Optional non-notebook decisioning run:
+   - `python scripts/run_decisioning.py --scores-csv <path_to_scores_csv>`
+
+Bundled dataset note: this repo includes a public Lending Club sample at `data/loans.csv` (sample subset from 2014-era source mirror).
+For more operational detail, see `docs/RUNBOOK.md`.
 
 ## Testing and Regression Framework
 
@@ -70,10 +101,15 @@ Directional, offline illustration only (not production evidence):
 
 ## Extension Opportunities
 
-- Externalize decision rules into a config-driven policy layer.
-- Calibrate probabilities and evaluate on unbiased holdout / out-of-time cohorts.
+- Calibrate probabilities before using scores as direct default probabilities.
+- Evaluate on unbiased holdout / out-of-time cohorts and report cohort-specific metrics.
 - Add survival/time-to-default modeling for multi-period risk views.
 - Add monitoring for drift, stability, and manual override patterns.
+
+## Model-Risk Notes
+
+- **Calibration:** current workflow demonstrates ranking and policy translation; treat raw model scores primarily as rank-order signals unless explicitly probability-calibrated.
+- **Validation discipline:** prefer a frozen holdout and/or out-of-time slice for policy comparison to avoid optimistic feedback from repeatedly iterating on the same sample.
 
 ## Key Takeaways
 

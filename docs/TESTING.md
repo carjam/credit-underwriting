@@ -10,6 +10,9 @@ This repository includes a lightweight test framework for regression checks plus
     - approve/review/decline mapping
     - threshold sweep math
     - simple capital helper functions
+- **Policy config tests** (`tests/test_policy_config.py`)
+  - Validate `config/policy.default.yaml` parses into expected threshold ranges.
+  - Verify policy application output columns and decision mapping behavior.
 
 - **Notebook checks** (`tests/test_notebook.py`)
   - **Always run (fast):**
