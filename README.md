@@ -104,7 +104,7 @@ Credit Risk, Underwriting Policy, Machine Learning, Decision Systems, Explainabl
 
 ## Quick start (clone and run)
 
-Use this section to get a working environment after cloning. Python **3.9+** is supported; **3.12 / 3.13** are used in CI and local validation.
+Use this section to get a working environment after cloning. Python **3.9+** is supported. **GitHub Actions** runs **Python 3.12**; local validation has also been run on **3.13** (Windows).
 
 1. **Clone and enter the repo**
    - `git clone https://github.com/carjam/CreditUnderwriting.git`
@@ -116,7 +116,7 @@ Use this section to get a working environment after cloning. Python **3.9+** is 
 3. **Install dependencies**
    - `pip install -r requirements.txt`
 4. **Sanity-check the install**
-   - `pytest` (fast; skips full notebook execution locally)
+   - `pytest` (usually fast: full notebook execution is skipped unless `CI=true`, `RUN_NOTEBOOK_E2E=1`, or `--run-notebook`). If your shell inherits `CI=true` and you want a quick check, run `SKIP_NOTEBOOK_E2E=1 pytest` (Unix) or `$env:SKIP_NOTEBOOK_E2E='1'; pytest` (PowerShell).
 5. **Run the analysis notebook**
    - Default data: `data/loans.csv` (~6.3k rows, 2014-era sample mirror)
    - Open `Credit_Underwriting_Decisioning-Lending_Club.ipynb` in Jupyter / VS Code and run all cells
