@@ -62,25 +62,6 @@ Lenders need more than model scores: they need explicit decision rules that bala
 | `docs/TESTING.md` | Testing and regression workflow documentation |
 | `requirements.txt` | Pinned dependencies for reproducible local/CI runs |
 
-**Environment:** Python 3.9.x recommended (per notebook metadata). Configure dataset path via `DATA_PATH` in the notebook.
-
-## Run Book
-
-1. Install dependencies:
-   - `pip install -r requirements.txt`
-2. Run tests (fast local path):
-   - `pytest`
-3. Run full notebook execution test:
-   - `pytest --run-notebook`
-4. Run notebook manually:
-   - open `Credit_Underwriting_Decisioning-Lending_Club.ipynb`
-   - ensure data resolves from `data/loans.csv` (or set `LENDING_CLUB_DATA_PATH`)
-5. Optional non-notebook decisioning run:
-   - `python scripts/run_decisioning.py --scores-csv <path_to_scores_csv>`
-
-Bundled dataset note: this repo includes a public Lending Club sample at `data/loans.csv` (sample subset from 2014-era source mirror).
-For more operational detail, see `docs/RUNBOOK.md`.
-
 ## Testing and Regression Framework
 
 - `pytest`-based test suite with strict markers (`unit`, `smoke`, `regression`, `notebook_e2e`)
@@ -120,3 +101,30 @@ Directional, offline illustration only (not production evidence):
 ## Skills Demonstrated
 
 Credit Risk, Underwriting Policy, Machine Learning, Decision Systems, Explainable AI (SHAP), Portfolio Simulation, Python, Product-Oriented Analytics
+
+## Quick start (clone and run)
+
+Use this section to get a working environment after cloning. Python **3.9+** is supported; **3.12 / 3.13** are used in CI and local validation.
+
+1. **Clone and enter the repo**
+   - `git clone https://github.com/carjam/CreditUnderwriting.git`
+   - `cd CreditUnderwriting`
+2. **Create a virtual environment (recommended)**
+   - `python -m venv .venv`
+   - Windows: `.venv\Scripts\activate`
+   - macOS/Linux: `source .venv/bin/activate`
+3. **Install dependencies**
+   - `pip install -r requirements.txt`
+4. **Sanity-check the install**
+   - `pytest` (fast; skips full notebook execution locally)
+5. **Run the analysis notebook**
+   - Default data: `data/loans.csv` (~6.3k rows, 2014-era sample mirror)
+   - Open `Credit_Underwriting_Decisioning-Lending_Club.ipynb` in Jupyter / VS Code and run all cells
+   - Or use another CSV: set `LENDING_CLUB_DATA_PATH` to its path before running the data-load cell
+6. **Optional: full notebook execution test** (several minutes)
+   - `pytest --run-notebook`
+7. **Optional: apply decision policy outside Jupyter**
+   - Prepare a CSV with a `p_good` column (and optionally `y_true` for default-rate summaries)
+   - `python scripts/run_decisioning.py --scores-csv your_scores.csv --policy config/policy.default.yaml`
+
+More detail (data provenance, CI knobs, troubleshooting): `docs/RUNBOOK.md`.
