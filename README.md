@@ -1,5 +1,16 @@
 # Credit Risk Decisioning Prototype (Notebook-Based)
 
+## Business Context
+
+Lenders need more than model scores: they need explicit decision rules that balance approval volume and risk outcomes. This project focuses on translating model output into policy-style decisions and directional business interpretation.
+
+## Problem Statement
+
+- Convert risk scores into actionable underwriting decisions.
+- Surface threshold tradeoffs: stricter approvals vs approval volume and observed default rate among approved.
+- Add explainability artifacts for model transparency.
+- Provide a simple, directional business-loss lens (clarity over precision).
+
 ## Executive Summary
 
 This repository contains a notebook-based credit underwriting workflow with an added decisioning layer. It reuses existing model outputs to demonstrate **approval thresholds**, **risk tiers**, **decision mapping** (approve / review / decline), a **threshold tradeoff simulation** (approval rate vs default rate among approved), **SHAP explainability**, and a **simple directional loss framing** (avg loan size + LGD assumptions).
@@ -36,17 +47,6 @@ flowchart TB
 ## Demo (where to see outputs)
 
 Charts and tables (**ROC/PR, confusion matrix, threshold sweep, SHAP**) are produced **inside the notebook** when cells are run. Static plot images are **not** checked into the repo (avoids stale screenshots); run the notebook locally or use `pytest --run-notebook` for an executed copy.
-
-## Business Context
-
-Lenders need more than model scores: they need explicit decision rules that balance approval volume and risk outcomes. This project focuses on translating model output into policy-style decisions and directional business interpretation.
-
-## Problem Statement
-
-- Convert risk scores into actionable underwriting decisions.
-- Surface threshold tradeoffs: stricter approvals vs approval volume and observed default rate among approved.
-- Add explainability artifacts for model transparency.
-- Provide a simple, directional business-loss lens (clarity over precision).
 
 ## Solution Overview:
 
