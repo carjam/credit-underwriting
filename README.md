@@ -4,9 +4,9 @@
 
 This repository contains a notebook-based credit underwriting workflow with an added decisioning layer. It reuses existing model outputs to demonstrate **approval thresholds**, **risk tiers**, **decision mapping** (approve / review / decline), a **threshold tradeoff simulation** (approval rate vs default rate among approved), **SHAP explainability**, and a **simple directional loss framing** (avg loan size + LGD assumptions).
 
-**Observed model efficacy (from the notebook analysis):** A simple logistic baseline shows **moderate rank ordering** on the test split (ROC-AUC around **0.66**—better than random, not near-perfect). **Tree-based models** (Random Forest and XGBoost) reach on the order of **~92% accuracy** with **stable cross-validation**, i.e., strong and consistent separation on this workflow’s train/test design. The parallel **interest-rate** regression achieves a **high R² (~0.92)**, consistent with pricing being highly predictable from the available credit-structure features.
+**Observed model efficacy (notebook run on the bundled sample):** A simple logistic baseline shows **moderate rank ordering** on the test split (ROC-AUC around **0.66**—better than random, not near-perfect). **Tree-based models** (Random Forest and XGBoost) reach on the order of **~92% accuracy** with **stable cross-validation** on that workflow’s train/test design. The parallel **interest-rate** regression achieves a **high R² (~0.92)** on the same sample. These figures are **illustrative of the pipeline**, not a guarantee on other files or vintages—re-run cells after any data or seed change.
 
-**FICO and credit structure:** In exploratory analysis, **Lending Club `sub_grade` is treated as FICO-like (binned credit quality)**; **interest rate and `sub_grade` are ~96% correlated**, which supports the view that **Lending Club’s posted pricing is heavily anchored in FICO-like credit tiers** (the remaining spread still matters competitively). The notebook also notes that **credit rating dominates the interest-rate model** in line with long industry use of FICO-style scores, while **feature-importance rankings can differ by target** (e.g., **inquiries** can rank highly for `loan_status` even when **`sub_grade` is central to rate prediction**). Exact metrics vary slightly with data slice and seed; re-run cells for your copy of the data.
+**FICO and credit structure (EDA in the notebook):** **Lending Club `sub_grade` is treated as FICO-like (binned credit quality)**; **interest rate and `sub_grade` are ~96% correlated**, consistent with **posted pricing being heavily anchored in FICO-like tiers** (the remaining spread still matters competitively). The notebook also notes that **credit rating dominates the interest-rate model** in line with long industry use of FICO-style scores, while **feature-importance rankings can differ by target** (e.g., **inquiries** can rank highly for `loan_status` even when **`sub_grade` is central to rate prediction**).
 
 ## System Flow
 
@@ -18,6 +18,24 @@ flowchart LR
     D --> E[Approve / Review / Decline + Risk tiers]
     E --> F[Portfolio metrics: approval rate, default rate, EL lens]
 ```
+
+## Evidence, scope, and reproduction
+
+- **Data (default):** `data/loans.csv` — public Lending Club–style **sample** (~**6.3k** rows; **2014-era** issue dates in the bundled file). Metrics in this README refer to **analysis on that artifact** unless you substitute another CSV via `LENDING_CLUB_DATA_PATH`.
+- **Code state:** dependencies are **pinned** in `requirements.txt`; **git commit** identifies the exact notebook and `src/` logic. Record both **commit** and **data file** when citing numbers externally.
+- **What this repo proves:** decisioning and reporting **machinery** (tiers, thresholds, SHAP, simple EL framing) on top of a standard ML workflow—not a validated production model for a live book.
+
+## Limitations
+
+- **Not deployed:** prototype notebook + library code; no online decision service, monitoring, or governance workflow.
+- **Calibration:** treat classifier outputs as **scores for ranking and policy simulation** unless you add explicit calibration; do **not** interpret raw `predict_proba` as a validated regulatory default probability.
+- **Validation:** in-notebook split/CV as implemented; **not** a substitute for out-of-time or unbiased holdout design for policy sign-off.
+- **Capital / EL:** illustrative **single-period** lens only—not CECL, IFRS 9, or regulatory capital.
+- **Data:** historical public sample; **not** representative of current Lending Club or any specific institution today.
+
+## Demo (where to see outputs)
+
+Charts and tables (**ROC/PR, confusion matrix, threshold sweep, SHAP**) are produced **inside the notebook** when cells are run. Static plot images are **not** checked into the repo (avoids stale screenshots); run the notebook locally or use `pytest --run-notebook` for an executed copy.
 
 ## Business Context
 
@@ -59,6 +77,7 @@ Lenders need more than model scores: they need explicit decision rules that bala
 | `scripts/run_decisioning.py` | CLI path to apply decision policy outside Jupyter |
 | `docs/PORTFOLIO_DECISIONING.md` | Stakeholder-oriented description of the decisioning add-on |
 | `docs/RUNBOOK.md` | Day-2 operations: environment, data snapshot, and execution steps |
+| `docs/MODEL_CARD.md` | Concise scope, data, limitations, and reproduction (quant-doc “model card lite”) |
 | `docs/TESTING.md` | Testing and regression workflow documentation |
 | `requirements.txt` | Pinned dependencies for reproducible local/CI runs |
 
@@ -86,11 +105,6 @@ Directional, offline illustration only (not production evidence):
 - Evaluate on unbiased holdout / out-of-time cohorts and report cohort-specific metrics.
 - Add survival/time-to-default modeling for multi-period risk views.
 - Add monitoring for drift, stability, and manual override patterns.
-
-## Model-Risk Notes
-
-- **Calibration:** current workflow demonstrates ranking and policy translation; treat raw model scores primarily as rank-order signals unless explicitly probability-calibrated.
-- **Validation discipline:** prefer a frozen holdout and/or out-of-time slice for policy comparison to avoid optimistic feedback from repeatedly iterating on the same sample.
 
 ## Key Takeaways
 
