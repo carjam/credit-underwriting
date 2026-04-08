@@ -1,0 +1,9 @@
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-q --strict-markers"
+testpaths = ["tests"]
+markers = [
+  "unit: fast deterministic unit tests",
+  "smoke: lightweight functional model checks",
+  "regression: baseline-based regression checks"
+]
