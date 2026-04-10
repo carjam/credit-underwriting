@@ -79,7 +79,7 @@ Credit Risk, Underwriting Policy, Machine Learning, Decision Systems, Explainabl
 
 Python **3.9+**; **CI** uses **3.12**; **3.13** validated locally (Windows).
 
-1. `git clone https://github.com/carjam/CreditUnderwriting.git` → `cd CreditUnderwriting`
+1. `git clone https://github.com/carjam/credit-underwriting.git` → `cd credit-underwriting`
 2. `python -m venv .venv` → activate (`.venv\Scripts\activate` on Windows, `source .venv/bin/activate` on Unix)
 3. `pip install -r requirements.txt`
 4. `pytest` — usually fast; notebook E2E runs if `CI=true` / `RUN_NOTEBOOK_E2E=1` / `--run-notebook`. Quick skip: `SKIP_NOTEBOOK_E2E=1 pytest` (Unix) or `$env:SKIP_NOTEBOOK_E2E='1'; pytest` (PowerShell)
